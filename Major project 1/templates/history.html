@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChurnIQ — History</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#080b14; --surface:#0e1320; --surface2:#151c2e;
+    --accent:#00e5ff; --accent2:#7c4dff; --accent3:#ff6b6b;
+    --text:#e8eaf6; --muted:#6b7a99; --border:rgba(255,255,255,0.07);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(8,11,20,0.85);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);}
+  .nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;color:var(--accent);text-decoration:none;}
+  .nav-logo span{color:var(--text);}
+  .nav-links{display:flex;gap:8px;}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:0.88rem;font-weight:500;padding:8px 18px;border-radius:8px;transition:all 0.2s;}
+  .nav-links a:hover,.nav-links a.active{color:var(--text);background:var(--surface2);}
+  .nav-links a.active{color:var(--accent);}
+  .nav-cta{background:var(--accent)!important;color:#080b14!important;font-weight:700!important;}
+
+  .page{padding:120px 48px 80px;max-width:1100px;margin:0 auto;}
+  .page-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:40px;flex-wrap:wrap;gap:16px;}
+  .page-label{font-size:0.75rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:10px;}
+  .page-title{font-family:'Syne',sans-serif;font-size:2.6rem;font-weight:800;letter-spacing:-1.5px;}
+
+  .header-actions{display:flex;gap:12px;}
+  .btn-outline{padding:10px 20px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:500;cursor:pointer;transition:all 0.2s;}
+  .btn-outline:hover{background:var(--surface2);}
+  .btn-danger{border-color:rgba(255,82,82,0.3);color:#ff5252;}
+  .btn-danger:hover{background:rgba(255,82,82,0.1)!important;}
+
+  /* Summary strip */
+  .summary-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px;}
+  .summary-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 22px;}
+  .s-num{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;}
+  .s-num.cyan{color:var(--accent);}
+  .s-num.green{color:#00e676;}
+  .s-num.orange{color:#ffab00;}
+  .s-num.red{color:#ff5252;}
+  .s-label{font-size:0.78rem;color:var(--muted);margin-top:4px;}
+
+  /* Filter bar */
+  .filter-bar{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+  .filter-btn{padding:8px 18px;border-radius:100px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;cursor:pointer;transition:all 0.2s;}
+  .filter-btn:hover{background:var(--surface2);color:var(--text);}
+  .filter-btn.active{background:var(--surface2);color:var(--accent);border-color:rgba(0,229,255,0.3);}
+  .search-wrap{margin-left:auto;position:relative;}
+  .search-wrap input{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 16px 9px 36px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.85rem;outline:none;transition:border-color 0.2s;width:220px;}
+  .search-wrap input:focus{border-color:var(--accent);}
+  .search-wrap::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:0.8rem;pointer-events:none;}
+
+  /* Table */
+  .table-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;}
+  table{width:100%;border-collapse:collapse;}
+  thead th{padding:14px 20px;text-align:left;font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);border-bottom:1px solid var(--border);}
+  tbody tr{border-bottom:1px solid var(--border);transition:background 0.15s;}
+  tbody tr:last-child{border-bottom:none;}
+  tbody tr:hover{background:var(--surface2);}
+  tbody td{padding:14px 20px;font-size:0.88rem;}
+  .td-id{color:var(--muted);font-family:monospace;font-size:0.82rem;}
+  .td-score{font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;}
+  .td-score.low{color:#00e676;}
+  .td-score.medium{color:#ffab00;}
+  .td-score.high{color:#ff5252;}
+  .badge{padding:4px 10px;border-radius:100px;font-size:0.72rem;font-weight:700;text-transform:uppercase;}
+  .badge-low{background:rgba(0,230,118,0.12);color:#00e676;}
+  .badge-medium{background:rgba(255,171,0,0.12);color:#ffab00;}
+  .badge-high{background:rgba(255,82,82,0.12);color:#ff5252;}
+  .del-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;transition:color 0.2s;padding:4px;}
+  .del-btn:hover{color:#ff5252;}
+
+  .empty-state{padding:60px;text-align:center;}
+  .empty-icon{font-size:3rem;margin-bottom:16px;}
+  .empty-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:8px;}
+  .empty-sub{color:var(--muted);font-size:0.88rem;}
+  .empty-link{display:inline-flex;align-items:center;gap:8px;margin-top:20px;padding:11px 22px;border-radius:10px;background:var(--accent);color:#080b14;font-weight:700;font-size:0.88rem;text-decoration:none;}
+
+  @media(max-width:900px){
+    nav{padding:16px 20px;} .nav-links{display:none;}
+    .page{padding:100px 20px 60px;}
+    .summary-strip{grid-template-columns:1fr 1fr;}
+    table thead th:nth-child(4),table tbody td:nth-child(4){display:none;}
+    .page-header{flex-direction:column;align-items:flex-start;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Churn<span>IQ</span></a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/predict">Predict</a>
+    <a href="/history" class="active">History</a>
+    <a href="/contact">Contact</a>
+    <a href="/predict" class="nav-cta">Get Started →</a>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="page-label">Analytics</div>
+      <div class="page-title">Prediction History</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-outline" onclick="exportCSV()">📤 Export CSV</button>
+      <button class="btn-outline btn-danger" onclick="clearAll()">🗑 Clear All</button>
+    </div>
+  </div>
+
+  <div class="summary-strip">
+    <div class="summary-card"><div class="s-num cyan" id="sTotal">0</div><div class="s-label">Total Predictions</div></div>
+    <div class="summary-card"><div class="s-num green" id="sLow">0</div><div class="s-label">Low Risk</div></div>
+    <div class="summary-card"><div class="s-num orange" id="sMedium">0</div><div class="s-label">Medium Risk</div></div>
+    <div class="summary-card"><div class="s-num red" id="sHigh">0</div><div class="s-label">High Risk</div></div>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+    <button class="filter-btn" onclick="setFilter('low',this)">🟢 Low</button>
+    <button class="filter-btn" onclick="setFilter('medium',this)">🟡 Medium</button>
+    <button class="filter-btn" onclick="setFilter('high',this)">🔴 High</button>
+    <div class="search-wrap">
+      <input type="text" id="searchBox" placeholder="Search..." oninput="renderTable()">
+    </div>
+  </div>
+
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Date & Time</th>
+          <th>Tenure</th>
+          <th>Monthly ($)</th>
+          <th>Total ($)</th>
+          <th>Score</th>
+          <th>Risk</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="historyBody"></tbody>
+    </table>
+    <div class="empty-state" id="emptyState" style="display:none">
+      <div class="empty-icon">📭</div>
+      <div class="empty-title">No predictions yet</div>
+      <div class="empty-sub">Run your first prediction to see it here.</div>
+      <a href="predict.html" class="empty-link">⚡ Run Prediction</a>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentFilter = 'all';
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+function getHistory() {
+  return JSON.parse(localStorage.getItem('churnHistory') || '[]');
+}
+
+function renderTable() {
+  const history = getHistory();
+  const search = document.getElementById('searchBox').value.toLowerCase();
+
+  const filtered = history.filter(p => {
+    const matchFilter = currentFilter === 'all' || p.labelClass === currentFilter;
+    const matchSearch = !search || String(p.tenure).includes(search) || String(p.monthly).includes(search) || p.level.toLowerCase().includes(search);
+    return matchFilter && matchSearch;
+  });
+
+  // Summary
+  document.getElementById('sTotal').textContent = history.length;
+  document.getElementById('sLow').textContent = history.filter(p => p.labelClass==='low').length;
+  document.getElementById('sMedium').textContent = history.filter(p => p.labelClass==='medium').length;
+  document.getElementById('sHigh').textContent = history.filter(p => p.labelClass==='high').length;
+
+  const body = document.getElementById('historyBody');
+  const empty = document.getElementById('emptyState');
+
+  if (!filtered.length) {
+    body.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  body.innerHTML = filtered.map((p, i) => `
+    <tr>
+      <td class="td-id">#${String(history.indexOf(p)+1).padStart(3,'0')}</td>
+      <td>${p.time || '—'}</td>
+      <td>${p.tenure} mo</td>
+      <td>$${Number(p.monthly).toFixed(2)}</td>
+      <td>$${Number(p.total).toFixed(2)}</td>
+      <td class="td-score ${p.labelClass}">${p.pct}%</td>
+      <td><span class="badge badge-${p.labelClass}">${p.level}</span></td>
+      <td><button class="del-btn" onclick="deleteItem(${history.indexOf(p)})">✕</button></td>
+    </tr>
+  `).join('');
+}
+
+function deleteItem(idx) {
+  const h = getHistory();
+  h.splice(idx, 1);
+  localStorage.setItem('churnHistory', JSON.stringify(h));
+  renderTable();
+}
+
+function clearAll() {
+  if (confirm('Clear all prediction history?')) {
+    localStorage.removeItem('churnHistory');
+    renderTable();
+  }
+}
+
+function exportCSV() {
+  const h = getHistory();
+  if (!h.length) { alert('No history to export.'); return; }
+  const header = 'ID,Date,Tenure,Monthly,Total,Score,Risk';
+  const rows = h.map((p,i) => `${i+1},"${p.time}",${p.tenure},${p.monthly},${p.total},${p.pct}%,${p.level}`);
+  const csv = [header,...rows].join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'churniq_history.csv';
+  a.click();
+}
+
+renderTable();
+</script>
+
+</body>
+</html>
